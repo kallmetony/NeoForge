@@ -123,10 +123,16 @@ public abstract class GrindstoneEvent extends Event
     {
         private ItemStack newTop = ItemStack.EMPTY;
         private ItemStack newBottom = ItemStack.EMPTY;
+        private boolean modified = false;
 
         public OnTakeItem(ItemStack top, ItemStack bottom, int xp)
         {
             super(top, bottom, xp);
+        }
+
+        public boolean isModified()
+        {
+            return modified;
         }
 
         /**
@@ -152,6 +158,7 @@ public abstract class GrindstoneEvent extends Event
         public void setNewTopItem(ItemStack newTop)
         {
             this.newTop = newTop;
+            this.modified = true;
         }
 
         /**
@@ -161,6 +168,7 @@ public abstract class GrindstoneEvent extends Event
         public void setNewBottomItem(ItemStack newBottom)
         {
             this.newBottom = newBottom;
+            this.modified = true;
         }
 
         /**

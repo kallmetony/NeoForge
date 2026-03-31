@@ -646,13 +646,20 @@ public class ForgeHooks
 
     public static boolean onGrindstoneTake(Container inputSlots, ContainerLevelAccess access, Function<Level, Integer> xpFunction)
     {
+        java.util.concurrent.atomic.AtomicBoolean handled = new java.util.concurrent.atomic.AtomicBoolean(false);
         access.execute((l,p) -> {
             int xp = xpFunction.apply(l);
             GrindstoneEvent.OnTakeItem e = new GrindstoneEvent.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), xp);
             if (MinecraftForge.EVENT_BUS.post(e))
             {
+                handled.set(true);
                 return;
             }
+            if (!e.isModified())
+            {
+                return;
+            }
+            handled.set(true);
             if (l instanceof ServerLevel)
             {
                 ExperienceOrb.award((ServerLevel)l, Vec3.atCenterOf(p), e.getXp());
@@ -662,7 +669,7 @@ public class ForgeHooks
             inputSlots.setItem(1, e.getNewBottomItem());
             inputSlots.setChanged();
         });
-        return true;
+        return handled.get();
     }
 
     private static ThreadLocal<Player> craftingPlayer = new ThreadLocal<Player>();
